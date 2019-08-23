@@ -1,0 +1,19 @@
+{
+  "name": "big-mouth",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "bluebird": "^3.5.5",
+    "co": "^4.6.0",
+    "serverless-pseudo-parameters": "^2.4.0"
+  },
+  "devDependencies": {
+    "aws-sdk": "^2.516.0"
+  }
+}
