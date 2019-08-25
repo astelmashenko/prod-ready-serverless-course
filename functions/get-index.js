@@ -27,15 +27,19 @@ function* getRestaurants() {
     path: url.pathname
   };
 
+  // console.log(">>> opts", opts);
+
   aws4.sign(opts);
+  
+  // console.log(">>> opts signed", opts);
 
   return (yield http
-      .get(restaurantsApiRoot))
+      .get(restaurantsApiRoot)
       .set('Host', opts.headers['Host'])
       .set('X-Amz-Date', opts.headers['X-Amz-Date'])
       .set('Authorization', opts.headers['Authorization'])
       .set('X-Amz-Security-Token', opts.headers['X-Amz-Security-Token'])
-    .body;
+  ).body;
 }
 
 module.exports.handler = co.wrap(function* (event) {

@@ -61,6 +61,7 @@ functions:
           method: get
     environment:
       restaurants_api: https://27phnukza0.execute-api.us-east-1.amazonaws.com/dev/restaurants
+
   get-restaurants:
     handler: functions/get-restaurants.handler
     events:
@@ -68,6 +69,17 @@ functions:
           path: /restaurants/
           method: get
           authorizer: aws_iam
+    environment:
+      restaurants_table: restaurants
+
+  search-restaurants:
+    handler: functions/search-restaurants.handler
+    events:
+      - http:
+          path: /restaurants/search
+          method: post
+          authorizer:
+            arn: arn:aws:cognito-idp:us-east-1:796931102025:userpool/us-east-1_DufZfQABc
     environment:
       restaurants_table: restaurants
 
