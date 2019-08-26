@@ -11,8 +11,8 @@ function* findRestaurantByTheme(theme, count) {
     let req = {
         TableName: tableName,
         Limit: count,
-        FilterExcpression: 'contains(themes, :theme)',
-        ExpressionAttributeValues: {':theme': theme}
+        FilterExpression: "contains(themes, :theme)",
+        ExpressionAttributeValues: {":theme": theme}
     };
 
     let resp = yield dynamodb.scan(req).promise();
