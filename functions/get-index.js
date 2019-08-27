@@ -8,6 +8,7 @@ const days = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 
 const http = require('superagent-promise')(require('superagent'), Promise)
 const aws4 = require('aws4');
 const URL = require('url');
+const awscred = Promise.promisifyAll(require('awscred'));
 
 const awsRegion = process.env.AWS_REGION;
 const cognitoUserPoolId = process.env.cognito_user_pool_id;
@@ -31,11 +32,13 @@ function* getRestaurants() {
     path: url.pathname
   };
 
-  // console.log(">>> opts", opts);
+  if (!process.env.AWS_ACCESS_KEY_ID) {
+    let cred = (yield awscred.loadAsync()).credentials;
+    process.env.AWS_ACCESS_KEY_ID = cred.accessKeyId;
+    process.env.AWS_SECRET_ACCESS_KEY = cred.secretAccessKey;
+  }
 
   aws4.sign(opts);
-  
-  // console.log(">>> opts signed", opts);
 
   let httpReq = http
       .get(restaurantsApiRoot)

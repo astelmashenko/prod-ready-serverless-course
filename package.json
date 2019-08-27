@@ -11,6 +11,7 @@
   "license": "ISC",
   "dependencies": {
     "aws4": "^1.8.0",
+    "awscred": "^1.4.2",
     "bluebird": "^3.5.5",
     "co": "^4.6.0",
     "mustache": "^3.0.2",
@@ -26,6 +27,7 @@
     "chancejs": "0.0.8",
     "cheerio": "^1.0.0-rc.3",
     "lodash": "^4.17.15",
-    "mocha": "^6.2.0"
+    "mocha": "^6.2.0",
+    "serverless": "^1.50.1"
   }
 }
