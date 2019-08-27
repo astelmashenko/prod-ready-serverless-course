@@ -51,6 +51,7 @@ function* getRestaurants() {
 }
 
 module.exports.handler = co.wrap(function* (event, context, callback) {
+  console.log('get-index called');
   let template = yield loadHtml();
   let restaurants = yield getRestaurants();
   let dayOfWeek = days[new Date().getDay()];
@@ -64,11 +65,13 @@ module.exports.handler = co.wrap(function* (event, context, callback) {
   };
   let html = Mustache.render(template, view);
 
-  return {
+  const response = {
     statusCode: 200,
     body: html,
     headers: {
       'Content-Type': 'text/html; charset=UTF-8'
     }
   };
+
+  callback(null, response);
 });
