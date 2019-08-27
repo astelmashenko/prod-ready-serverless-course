@@ -37,16 +37,20 @@ function* getRestaurants() {
   
   // console.log(">>> opts signed", opts);
 
-  return (yield http
+  let httpReq = http
       .get(restaurantsApiRoot)
       .set('Host', opts.headers['Host'])
       .set('X-Amz-Date', opts.headers['X-Amz-Date'])
-      .set('Authorization', opts.headers['Authorization'])
-      .set('X-Amz-Security-Token', opts.headers['X-Amz-Security-Token'])
-  ).body;
+      .set('Authorization', opts.headers['Authorization']);
+
+  if(opts.headers['X-Amz-Security-Token']) {
+    httpReq.set('X-Amz-Security-Token', opts.headers['X-Amz-Security-Token']);
+  }
+
+  return (yield httpReq).body;
 }
 
-module.exports.handler = co.wrap(function* (event) {
+module.exports.handler = co.wrap(function* (event, context, callback) {
   let template = yield loadHtml();
   let restaurants = yield getRestaurants();
   let dayOfWeek = days[new Date().getDay()];

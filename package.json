@@ -4,7 +4,7 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "integration-test": "./node_modules/.bin/mocha tests/test_cases --reporter spec"
   },
   "author": "",
   "license": "ISC",
@@ -18,6 +18,11 @@
     "superagent-promise": "^1.1.0"
   },
   "devDependencies": {
-    "aws-sdk": "^2.516.0"
+    "aws-sdk": "^2.516.0",
+    "awscred": "^1.4.2",
+    "chai": "^4.2.0",
+    "cheerio": "^1.0.0-rc.3",
+    "lodash": "^4.17.15",
+    "mocha": "^6.2.0"
   }
 }
