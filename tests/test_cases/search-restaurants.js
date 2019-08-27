@@ -7,6 +7,8 @@ const when = require('../steps/when');
 const given = require('../steps/given');
 
 describe(`Given an authenticated user`, co.wrap(function* () {
+    let user;
+
     before(co.wrap(function* () {
         yield init();
         user = yield given.an_authenticated_user();
