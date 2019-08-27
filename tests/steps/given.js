@@ -58,7 +58,7 @@ let an_authenticated_user = function* () {
       NEW_PASSWORD: random_password()
     }
   };
-  console.log(`[${username}] - before responded to auth challenge`);
+//   console.log(`[${username}] - before responded to auth challenge`);
   let challengeResp = yield cognito.adminRespondToAuthChallenge(challengeReq).promise();
   
   console.log(`[${username}] - responded to auth challenge`);
