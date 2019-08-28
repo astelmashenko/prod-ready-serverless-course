@@ -6,9 +6,8 @@ const fs = Promise.promisifyAll(require('fs'));
 const Mustache = require('mustache');
 const days = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
 const http = require('superagent-promise')(require('superagent'), Promise)
-const aws4 = require('aws4');
+const aws4 = require('../lib/aws4');
 const URL = require('url');
-const awscred = Promise.promisifyAll(require('../lib/awscred'));
 
 const awsRegion = process.env.AWS_REGION;
 const cognitoUserPoolId = process.env.cognito_user_pool_id;
@@ -32,15 +31,6 @@ function* getRestaurants() {
     path: url.pathname
   };
 
-  if (!process.env.AWS_ACCESS_KEY_ID) {
-    let cred = (yield awscred.loadAsync()).credentials;
-    process.env.AWS_ACCESS_KEY_ID = cred.accessKeyId;
-    process.env.AWS_SECRET_ACCESS_KEY = cred.secretAccessKey;
-    if (cred.sessionToken) {
-      process.env.AWS_SESSION_TOKEN = cred.sessionToken;
-    }
-  }
-
   aws4.sign(opts);
 
   let httpReq = http
@@ -57,7 +47,8 @@ function* getRestaurants() {
 }
 
 module.exports.handler = co.wrap(function* (event, context, callback) {
-  console.log('get-index called');
+  yield aws4.init();
+  // console.log('get-index called');
   let template = yield loadHtml();
   let restaurants = yield getRestaurants();
   let dayOfWeek = days[new Date().getDay()];

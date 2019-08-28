@@ -1,8 +1,7 @@
 'use strict';
 
 const co = require('co');
-const Promise = require('bluebird');
-const awscred = Promise.promisifyAll(require('../../lib/awscred'));
+const aws4 = require('../../lib/aws4');
 
 let initialized = false;
 
@@ -18,18 +17,9 @@ let init = co.wrap(function* () {
     process.env.cognito_user_pool_id = 'us-east-1_DufZfQABc';
     process.env.cognito_server_client_id = '1qmept7tv5sc60btuq9dhnf714';
 
-    if (!process.env.AWS_ACCESS_KEY_ID) {
-        let cred = yield awscred.loadAsync();
-    
-        process.env.AWS_ACCESS_KEY_ID     = cred.credentials.accessKeyId;
-        process.env.AWS_SECRET_ACCESS_KEY = cred.credentials.secretAccessKey;
+    yield aws4.init();
 
-        if (cred.sessionToken) {
-            process.env.AWS_SESSION_TOKEN = cred.sessionToken;
-        }
-    }
-
-    console.log('AWS credentials loaded');
+    // console.log('AWS credentials loaded');
 
     initialized = true; 
 });
