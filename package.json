@@ -11,6 +11,7 @@
   "license": "ISC",
   "dependencies": {
     "bluebird": "^3.5.5",
+    "chance": "^1.0.18",
     "co": "^4.6.0",
     "mustache": "^3.0.2",
     "serverless-pseudo-parameters": "^2.4.0",
@@ -21,7 +22,6 @@
     "aws-sdk": "^2.516.0",
     "awscred": "^1.4.2",
     "chai": "^4.2.0",
-    "chance": "^1.0.18",
     "chancejs": "0.0.8",
     "cheerio": "^1.0.0-rc.3",
     "lodash": "^4.17.15",
