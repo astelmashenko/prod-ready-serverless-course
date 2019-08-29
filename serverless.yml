@@ -24,8 +24,9 @@ provider:
       Resource: arn:aws:kinesis:#{AWS::Region}:#{AWS::AccountId}:stream/order-events
     - Effect: Allow
       Action: sns:Publish
-      Resource: arn:aws:sns:#{AWS::Region}:#{AWS::AccountId}:restaurant-notification
-
+      Resource:
+        - arn:aws:sns:#{AWS::Region}:#{AWS::AccountId}:restaurant-notification
+        - arn:aws:sns:#{AWS::Region}:#{AWS::AccountId}:user-notification
 custom:
   cognitoAuthorizer: arn:aws:cognito-idp:#{AWS::Region}:#{AWS::AccountId}:userpool/us-east-1_DufZfQABc
 
@@ -114,6 +115,24 @@ functions:
       order_events_stream: order-events
       restaurant_notification_topic: arn:aws:sns:#{AWS::Region}:#{AWS::AccountId}:restaurant-notification
 
+  accept-order:
+    handler: functions/accept-order.handler
+    events:
+      - http:
+          path: /orders/accept
+          method: post
+    environment:
+      order_events_stream: order-events
+
+  notify-user:
+    handler: functions/notify-user.handler
+    events:
+      - stream:
+          arn: arn:aws:kinesis:#{AWS::Region}:#{AWS::AccountId}:stream/order-events
+    environment:
+      order_events_stream: order-events
+      user_notification_topic: arn:aws:sns:#{AWS::Region}:#{AWS::AccountId}:user-notification
+
 resources:
   Resources:
     restaurantsTable:
@@ -139,6 +158,11 @@ resources:
       Properties:
         DisplayName: restaurant-notification
         TopicName: restaurant-notification
+    userNotificationTopic:
+      Type: AWS::SNS::Topic
+      Properties:
+        DisplayName: user-notification
+        TopicName: user-notification
 
 #    The following are a few example events you can configure
 #    NOTE: Please make sure to change your handler code to work with those events
