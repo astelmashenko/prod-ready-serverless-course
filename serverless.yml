@@ -36,6 +36,7 @@ functions:
       orders_api: https://e7j9901i64.execute-api.us-east-1.amazonaws.com/dev/orders
       cognito_user_pool_id: us-east-1_DufZfQABc
       cognito_client_id: 349lgu0a8vhk84pvm0mflngg35
+      async_metrics: true
     iamRoleStatements:
       - Effect: Allow
         Action: execute-api:Invoke
@@ -50,6 +51,7 @@ functions:
           authorizer: aws_iam
     environment:
       restaurants_table: restaurants
+      async_metrics: true
     iamRoleStatements:
       - Effect: Allow
         Action: dynamodb:scan
@@ -65,6 +67,7 @@ functions:
             arn: ${self:custom.cognitoAuthorizer}
     environment:
       restaurants_table: restaurants
+      async_metrics: true
     iamRoleStatements:
       - Effect: Allow
         Action: dynamodb:scan
@@ -80,6 +83,7 @@ functions:
             arn: ${self:custom.cognitoAuthorizer}
     environment:
       order_events_stream: order-events
+      async_metrics: true
     iamRoleStatements:
       - Effect: Allow
         Action: kinesis:PutRecord
@@ -112,6 +116,7 @@ functions:
           method: post
     environment:
       order_events_stream: order-events
+      async_metrics: true
     iamRoleStatements:
       - Effect: Allow
         Action: kinesis:PutRecord
@@ -142,6 +147,7 @@ functions:
           method: post
     environment:
       order_events_stream: order-events
+      async_metrics: true
     iamRoleStatements:
       - Effect: Allow
         Action: kinesis:PutRecord
