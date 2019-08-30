@@ -11,12 +11,18 @@ custom:
     prod: WARN
     default: DEBUG
   cognitoAuthorizer: arn:aws:cognito-idp:#{AWS::Region}:#{AWS::AccountId}:userpool/us-east-1_DufZfQABc
+  serverless-iam-roles-per-function:
+    defaultInherit: true
 
 provider:
   name: aws
   runtime: nodejs10.x
   environment:
     log_level: ${self:custom.logLevel.${self:custom.stage}, self:custom.logLevel.default}
+  iamRoleStatements:
+    - Effect: Allow
+      Action: cloudwatch:PutMetricData
+      Resource: '*'
 
 functions:
   get-index:
