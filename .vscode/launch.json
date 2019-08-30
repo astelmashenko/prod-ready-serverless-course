@@ -64,7 +64,7 @@
                 "{}"
             ],
             "env": {
-                "restaurants_api": "https://27phnukza0.execute-api.us-east-1.amazonaws.com/dev/restaurants",
+                "restaurants_api": "https://e7j9901i64.execute-api.us-east-1.amazonaws.com/dev/restaurants",
                 "cognito_user_pool_id": "us-east-1_DufZfQABc",
                 "cognito_client_id": "349lgu0a8vhk84pvm0mflngg35"
             }

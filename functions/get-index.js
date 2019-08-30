@@ -52,6 +52,7 @@ module.exports.handler = co.wrap(function* (event, context, callback) {
   // console.log('get-index called');
   let template = yield loadHtml();
   let restaurants = yield getRestaurants();
+
   let dayOfWeek = days[new Date().getDay()];
   let view = {
     dayOfWeek,
