@@ -10,6 +10,9 @@ const aws4 = require('../lib/aws4');
 const URL = require('url');
 const log = require('../lib/log');
 
+const middy         = require('middy');
+const sampleLogging = require('../middleware/sample-logging');
+
 const awsRegion = process.env.AWS_REGION;
 const cognitoUserPoolId = process.env.cognito_user_pool_id;
 const cognitoClientId = process.env.cognito_client_id;
@@ -48,7 +51,7 @@ function* getRestaurants() {
   return (yield httpReq).body;
 }
 
-module.exports.handler = co.wrap(function* (event, context, callback) {
+const handler = co.wrap(function* (event, context, callback) {
   yield aws4.init();
   let template = yield loadHtml();
   log.debug('index HTML loaded');
@@ -79,3 +82,6 @@ module.exports.handler = co.wrap(function* (event, context, callback) {
 
   callback(null, response);
 });
+
+module.exports.handler = middy(handler)
+  .use(sampleLogging({ sampleRate: 0.01 }));
