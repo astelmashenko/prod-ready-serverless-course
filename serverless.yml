@@ -5,12 +5,18 @@ plugins:
   - serverless-sam
   - serverless-iam-roles-per-function
 
+custom:
+  stage: ${opt:stage, self:provider.stage}
+  logLevel:
+    prod: WARN
+    default: DEBUG
+  cognitoAuthorizer: arn:aws:cognito-idp:#{AWS::Region}:#{AWS::AccountId}:userpool/us-east-1_DufZfQABc
+
 provider:
   name: aws
   runtime: nodejs10.x
-
-custom:
-  cognitoAuthorizer: arn:aws:cognito-idp:#{AWS::Region}:#{AWS::AccountId}:userpool/us-east-1_DufZfQABc
+  environment:
+    log_level: ${self:custom.logLevel.${self:custom.stage}, self:custom.logLevel.default}
 
 functions:
   get-index:

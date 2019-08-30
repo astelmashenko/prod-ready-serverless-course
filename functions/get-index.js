@@ -8,6 +8,7 @@ const days = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 
 const http = require('superagent-promise')(require('superagent'), Promise)
 const aws4 = require('../lib/aws4');
 const URL = require('url');
+const log = require('../lib/log');
 
 const awsRegion = process.env.AWS_REGION;
 const cognitoUserPoolId = process.env.cognito_user_pool_id;
@@ -49,9 +50,11 @@ function* getRestaurants() {
 
 module.exports.handler = co.wrap(function* (event, context, callback) {
   yield aws4.init();
-  // console.log('get-index called');
   let template = yield loadHtml();
+  log.debug('index HTML loaded');
+
   let restaurants = yield getRestaurants();
+  log.debug(`loaded ${restaurants.length} restaurants`);
 
   let dayOfWeek = days[new Date().getDay()];
   let view = {
@@ -64,6 +67,7 @@ module.exports.handler = co.wrap(function* (event, context, callback) {
     placeOrderUrl: `${ordersApiRoot}`
   };
   let html = Mustache.render(template, view);
+  log.debug(`generated HTML [${html.length}] bytes`);
 
   const response = {
     statusCode: 200,
