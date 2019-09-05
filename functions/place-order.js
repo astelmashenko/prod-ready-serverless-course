@@ -1,7 +1,8 @@
 'use strict';
 
 const co = require('co');
-const AWS = require('aws-sdk');
+const AWSXray    = require('aws-xray-sdk')
+const AWS        = AWSXray.captureAWS(require('aws-sdk'));
 const kinesis = new AWS.Kinesis();
 const chance = require('chance').Chance();
 const log = require('../lib/log');

@@ -4,6 +4,7 @@ plugins:
   - serverless-pseudo-parameters
   - serverless-sam
   - serverless-iam-roles-per-function
+  - serverless-plugin-tracing
 
 custom:
   stage: ${opt:stage, self:provider.stage}
@@ -17,12 +18,18 @@ custom:
 provider:
   name: aws
   runtime: nodejs10.x
+  tracing: true
   environment:
     log_level: ${self:custom.logLevel.${self:custom.stage}, self:custom.logLevel.default}
   iamRoleStatements:
     - Effect: Allow
       Action: cloudwatch:PutMetricData
       Resource: "*"
+    - Effect: Allow
+      Action:
+        - xray:PutTraceSegments
+        - xray:PutTelemetryRecords
+      Resource: '*'
 
 functions:
   get-index:
@@ -183,6 +190,7 @@ functions:
                 - apigateway.amazonaws.com
               eventName:
                 - CreateDeployment
+    tracing: false
     environment:
       alarm_actions: arn:aws:sns:#{AWS::Region}:#{AWS::AccountId}:NotifyMe
       ok_actions: arn:aws:sns:#{AWS::Region}:#{AWS::AccountId}:NotifyMe

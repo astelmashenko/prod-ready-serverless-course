@@ -1,7 +1,8 @@
 'use strict';
 
 const co = require('co');
-const AWS = require('aws-sdk');
+const AWSXray    = require('aws-xray-sdk')
+const AWS        = AWSXray.captureAWS(require('aws-sdk'));
 const dynamodb = new AWS.DynamoDB.DocumentClient();
 
 const defaultResults = process.env.defaultResults || 8;
