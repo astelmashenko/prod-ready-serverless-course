@@ -9,6 +9,7 @@ const http = require('superagent-promise')(require('superagent'), Promise)
 const aws4 = require('../lib/aws4');
 const URL = require('url');
 const log = require('../lib/log');
+const AWSXray    = require('aws-xray-sdk')
 
 const middy         = require('middy');
 const sampleLogging = require('../middleware/sample-logging');
@@ -50,7 +51,21 @@ function* getRestaurants() {
     httpReq.set('X-Amz-Security-Token', opts.headers['X-Amz-Security-Token']);
   }
 
-  return (yield httpReq).body;
+  return new Promise((resolve, reject) => {
+    let f = co.wrap(function* (subsegment) {
+      subsegment.addMetadata('url', restaurantsApiRoot);
+      try {
+        let body = (yield httpReq).body;
+        subsegment.close();
+        resolve(body);
+      } catch(err) {
+        subsegment.close(err);
+        reject(err);
+      }
+    });
+    let segment = AWSXray.getSegment();
+    AWSXray.captureAsyncFunc('getting restaurant', f, segment);
+  });
 }
 
 const handler = co.wrap(function* (event, context, callback) {
