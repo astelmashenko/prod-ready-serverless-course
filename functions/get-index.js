@@ -9,9 +9,10 @@ const http = require('superagent-promise')(require('superagent'), Promise)
 const aws4 = require('../lib/aws4');
 const URL = require('url');
 const log = require('../lib/log');
-const AWSXray    = require('aws-xray-sdk')
+const correlationIds = require('../middleware/capture-correlation-ids');
+const AWSXray = require('aws-xray-sdk')
 
-const middy         = require('middy');
+const middy = require('middy');
 const sampleLogging = require('../middleware/sample-logging');
 
 const cloudwatch = require('../lib/cloudwatch');
@@ -42,12 +43,12 @@ function* getRestaurants() {
   aws4.sign(opts);
 
   let httpReq = http
-      .get(restaurantsApiRoot)
-      .set('Host', opts.headers['Host'])
-      .set('X-Amz-Date', opts.headers['X-Amz-Date'])
-      .set('Authorization', opts.headers['Authorization']);
+    .get(restaurantsApiRoot)
+    .set('Host', opts.headers['Host'])
+    .set('X-Amz-Date', opts.headers['X-Amz-Date'])
+    .set('Authorization', opts.headers['Authorization']);
 
-  if(opts.headers['X-Amz-Security-Token']) {
+  if (opts.headers['X-Amz-Security-Token']) {
     httpReq.set('X-Amz-Security-Token', opts.headers['X-Amz-Security-Token']);
   }
 
@@ -58,7 +59,7 @@ function* getRestaurants() {
         let body = (yield httpReq).body;
         subsegment.close();
         resolve(body);
-      } catch(err) {
+      } catch (err) {
         subsegment.close(err);
         reject(err);
       }
@@ -74,9 +75,9 @@ const handler = co.wrap(function* (event, context, callback) {
   log.debug('index HTML loaded');
 
   let restaurants = yield cloudwatch.trackExecTime(
-      'GetRestaurantLatency',
-      () => getRestaurants()
-    );
+    'GetRestaurantLatency',
+    () => getRestaurants()
+  );
   log.debug(`loaded ${restaurants.length} restaurants`);
 
   let dayOfWeek = days[new Date().getDay()];
@@ -106,4 +107,5 @@ const handler = co.wrap(function* (event, context, callback) {
 });
 
 module.exports.handler = middy(handler)
+  .use(correlationIds({ sampleDebugLogRate: 0.01 }))
   .use(sampleLogging({ sampleRate: 0.01 }));

@@ -10,6 +10,10 @@ const tableName = process.env.restaurants_table;
 const log = require('../lib/log');
 const cloudwatch = require('../lib/cloudwatch');
 
+const middy = require('middy');
+const sampleLogging = require('../middleware/sample-logging');
+const correlationIds = require('../middleware/capture-correlation-ids');
+
 function* getRestaurants(count) {
     let req = {
         TableName: tableName,
@@ -23,7 +27,7 @@ function* getRestaurants(count) {
     return resp.Items;
 }
 
-module.exports.handler = co.wrap(function* (event, context, cb) {
+const handler = co.wrap(function* (event, context, cb) {
     let restaurants = yield getRestaurants(defaultResults);
     log.debug(`fetched ${restaurants.length} restaurants`);
 
@@ -36,3 +40,7 @@ module.exports.handler = co.wrap(function* (event, context, cb) {
   
     cb(null, response);
   });
+
+module.exports.handler = middy(handler)
+  .use(correlationIds({ sampleDebugLogRate: 0.01 }))
+  .use(sampleLogging({ sampleRate: 0.01 }));
