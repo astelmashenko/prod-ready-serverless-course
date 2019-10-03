@@ -60,13 +60,14 @@
                 "local",
                 "-f",
                 "get-index",
-                "-d",
-                "{}"
+                "-p",
+                "examples/get-index.json"
             ],
             "env": {
                 "restaurants_api": "https://e7j9901i64.execute-api.us-east-1.amazonaws.com/dev/restaurants",
                 "cognito_user_pool_id": "us-east-1_DufZfQABc",
-                "cognito_client_id": "349lgu0a8vhk84pvm0mflngg35"
+                "cognito_client_id": "349lgu0a8vhk84pvm0mflngg35",
+                "AWS_XRAY_CONTEXT_MISSING": "LOG_ERROR"
             }
         }
     ]

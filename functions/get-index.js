@@ -5,7 +5,7 @@ const Promise = require('bluebird');
 const fs = Promise.promisifyAll(require('fs'));
 const Mustache = require('mustache');
 const days = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
-const http = require('superagent-promise')(require('superagent'), Promise)
+const http = require('../lib/http')
 const aws4 = require('../lib/aws4');
 const URL = require('url');
 const log = require('../lib/log');
@@ -42,15 +42,11 @@ function* getRestaurants() {
 
   aws4.sign(opts);
 
-  let httpReq = http
-    .get(restaurantsApiRoot)
-    .set('Host', opts.headers['Host'])
-    .set('X-Amz-Date', opts.headers['X-Amz-Date'])
-    .set('Authorization', opts.headers['Authorization']);
-
-  if (opts.headers['X-Amz-Security-Token']) {
-    httpReq.set('X-Amz-Security-Token', opts.headers['X-Amz-Security-Token']);
-  }
+  let httpReq = http({
+    uri: restaurantsApiRoot,
+    method: 'get',
+    headers: opts.headers
+  });
 
   return new Promise((resolve, reject) => {
     let f = co.wrap(function* (subsegment) {
